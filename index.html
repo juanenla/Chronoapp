@@ -709,6 +709,8 @@
         }
 
         // Función para generar el gráfico de concentración plasmática
+        // Calcula el perfil de concentración para 72 horas (3 días) para alcanzar estado estacionario
+        // Luego muestra solo las últimas 24 horas que representan un ciclo completo en equilibrio
         function generarGrafico() {
             const vidaMedia = parseFloat(document.getElementById('half-life-input').value);
             const tmax = parseFloat(document.getElementById('tmax-input').value);
@@ -741,9 +743,9 @@
             // Calcular constante de eliminación (k)
             const k = 0.693 / vidaMedia;
             
-            // Generar datos para 24 horas
-            const horas = [];
-            const concentraciones = [];
+            // Generar datos para 72 horas (3 días) para alcanzar estado estacionario
+            const horasCompletas = [];
+            const concentracionesCompletas = [];
             
             // Convertir horas de dosis a minutos desde medianoche
             const dosisMinutos = dosis.map(d => {
@@ -754,28 +756,41 @@
                 };
             });
             
-            for (let hora = 0; hora <= 24; hora++) {
+            // Calcular concentraciones para 72 horas (3 días completos)
+            for (let hora = 0; hora <= 72; hora++) {
                 const tiempoMinutos = hora * 60;
-                horas.push(hora);
+                horasCompletas.push(hora);
                 
                 let concentracion = 0;
                 
-                // Calcular concentración para cada dosis
-                dosisMinutos.forEach(dosis => {
-                    if (tiempoMinutos >= dosis.minutos) {
-                        const tiempoDesdeDosis = (tiempoMinutos - dosis.minutos) / 60; // en horas
-                        if (tiempoDesdeDosis <= tmax) {
-                            // Fase de absorción (hasta Tmax)
-                            concentracion += (dosis.mg / dosisTotal) * (tiempoDesdeDosis / tmax);
-                        } else {
-                            // Fase de eliminación (después de Tmax)
-                            const concentracionMaxima = dosis.mg / dosisTotal;
-                            concentracion += concentracionMaxima * Math.exp(-k * (tiempoDesdeDosis - tmax));
+                // Calcular concentración para cada dosis considerando múltiples días
+                for (let dia = 0; dia < 3; dia++) {
+                    dosisMinutos.forEach(dosis => {
+                        const tiempoDesdeDosis = (tiempoMinutos - dosis.minutos - (dia * 24 * 60)) / 60; // en horas
+                        if (tiempoDesdeDosis >= 0) {
+                            if (tiempoDesdeDosis <= tmax) {
+                                // Fase de absorción (hasta Tmax)
+                                concentracion += (dosis.mg / dosisTotal) * (tiempoDesdeDosis / tmax);
+                            } else {
+                                // Fase de eliminación (después de Tmax)
+                                const concentracionMaxima = dosis.mg / dosisTotal;
+                                concentracion += concentracionMaxima * Math.exp(-k * (tiempoDesdeDosis - tmax));
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 
-                concentraciones.push(concentracion);
+                concentracionesCompletas.push(concentracion);
+            }
+            
+            // Extraer solo las últimas 24 horas (horas 48-72) para el gráfico final
+            // Esto representa un día completo en estado estacionario
+            const horas = [];
+            const concentraciones = [];
+            
+            for (let i = 48; i <= 72; i++) {
+                horas.push(i - 48); // Mapear 48-72 a 0-24
+                concentraciones.push(concentracionesCompletas[i]);
             }
             
             // Destruir gráfico anterior si existe
@@ -807,7 +822,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Concentración Plasmática en 24 Horas',
+                            text: 'Concentración Plasmática - Ciclo de 24h en Estado Estacionario',
                             font: {
                                 size: 16,
                                 weight: 'bold'
