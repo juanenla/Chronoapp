@@ -187,11 +187,21 @@
             padding-bottom: 8px;
         }
 
-        .dosis-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        .dosis-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             gap: 20px;
             margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .dosis-grid {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 15px;
+            flex-wrap: nowrap;
         }
 
         .dosis-item {
@@ -200,6 +210,15 @@
             border-radius: 8px;
             border: 2px solid #e0e0e0;
             transition: all 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+            max-width: 250px;
+        }
+
+        .dosis-grid .dosis-item {
+            flex: 0 0 calc(22% - 15px);
+            min-width: 180px;
+            max-width: none;
         }
 
         .dosis-item:hover {
@@ -388,8 +407,26 @@
                 min-width: auto;
             }
 
+            .dosis-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dosis-item {
+                min-width: auto;
+                max-width: 100%;
+                width: 100%;
+            }
+
             .dosis-grid {
-                grid-template-columns: 1fr;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .dosis-grid .dosis-item {
+                flex: 0 0 100%;
+                min-width: auto;
+                max-width: 100%;
             }
 
             .dosis-fields {
@@ -430,7 +467,7 @@
         
         <div class="horario-dosis-section">
             <h4>Horario de Dosis</h4>
-            <div class="dosis-grid">
+            <div class="dosis-container dosis-grid">
                 <div class="dosis-item">
                     <h5>Dosis 1</h5>
                     <div class="dosis-fields">
