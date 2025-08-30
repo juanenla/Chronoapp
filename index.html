@@ -743,7 +743,8 @@
             // Calcular constante de eliminación (k)
             const k = 0.693 / vidaMedia;
             
-            // Generar datos para 72 horas (3 días) para alcanzar estado estacionario
+            // Generar datos de alta resolución para 72 horas (3 días) para alcanzar estado estacionario
+            // Resolución de 15 minutos = 0.25 horas
             const horasCompletas = [];
             const concentracionesCompletas = [];
             
@@ -756,10 +757,12 @@
                 };
             });
             
-            // Calcular concentraciones para 72 horas (3 días completos)
-            for (let hora = 0; hora <= 72; hora++) {
-                const tiempoMinutos = hora * 60;
-                horasCompletas.push(hora);
+            // Calcular concentraciones para 72 horas con resolución de 15 minutos
+            // Total de puntos: 72 / 0.25 = 288 puntos
+            for (let punto = 0; punto <= 288; punto++) {
+                const tiempoHoras = punto * 0.25; // Convertir punto a horas
+                const tiempoMinutos = tiempoHoras * 60;
+                horasCompletas.push(tiempoHoras);
                 
                 let concentracion = 0;
                 
@@ -785,11 +788,17 @@
             
             // Extraer solo las últimas 24 horas (horas 48-72) para el gráfico final
             // Esto representa un día completo en estado estacionario
+            // Con resolución de 15 minutos: 24 / 0.25 = 96 puntos
             const horas = [];
             const concentraciones = [];
             
-            for (let i = 48; i <= 72; i++) {
-                horas.push(i - 48); // Mapear 48-72 a 0-24
+            // Tomar los últimos 96 puntos (últimas 24 horas)
+            const inicioUltimoDia = 192; // 48 horas * 4 puntos por hora
+            const finUltimoDia = 288;     // 72 horas * 4 puntos por hora
+            
+            for (let i = inicioUltimoDia; i <= finUltimoDia; i++) {
+                const horaMapeada = (i - inicioUltimoDia) * 0.25; // Mapear a 0-24 horas
+                horas.push(horaMapeada);
                 concentraciones.push(concentracionesCompletas[i]);
             }
             
@@ -812,8 +821,8 @@
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
+                        pointRadius: 2,
+                        pointHoverRadius: 4
                     }]
                 },
                 options: {
@@ -822,7 +831,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Concentración Plasmática - Ciclo de 24h en Estado Estacionario',
+                            text: 'Concentración Plasmática - Ciclo Continuo de 24h en Estado Estacionario',
                             font: {
                                 size: 16,
                                 weight: 'bold'
@@ -835,12 +844,18 @@
                     },
                     scales: {
                         x: {
+                            type: 'linear',
                             title: {
                                 display: true,
                                 text: 'Hora del día'
                             },
+                            min: 0,
+                            max: 24,
                             ticks: {
-                                stepSize: 2
+                                stepSize: 6,
+                                callback: function(value) {
+                                    return value + 'h';
+                                }
                             }
                         },
                         y: {
