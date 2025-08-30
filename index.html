@@ -23,7 +23,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
             box-sizing: border-box;
         }
@@ -137,25 +137,135 @@
             width: 100px;
         }
 
-        .horario-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .dosis-total-group {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #2196F3;
+            text-align: center;
+        }
+
+        .dosis-total-group label {
+            font-weight: 700;
+            color: #1976D2;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .dosis-total-group input {
+            padding: 12px 16px;
+            border: 2px solid #2196F3;
+            border-radius: 8px;
+            font-size: 18px;
+            width: 150px;
+            text-align: center;
+            font-weight: 600;
+            color: #1976D2;
+        }
+
+        .dosis-total-group input:focus {
+            outline: none;
+            border-color: #1565C0;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .horario-dosis-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .horario-dosis-section h4 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 8px;
+        }
+
+        .dosis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .dosis-item {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .dosis-item:hover {
+            border-color: #4CAF50;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+        }
+
+        .dosis-item h5 {
+            color: #333;
+            margin: 0 0 15px 0;
+            text-align: center;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            margin: -20px -20px 15px -20px;
+        }
+
+        .dosis-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
             margin-bottom: 15px;
         }
 
-        .horario-group label {
-            font-weight: 600;
-            color: #444;
-            min-width: 120px;
+        .dosis-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .horario-group input {
+        .dosis-field label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .dosis-field input {
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
-            width: 80px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .dosis-field input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+        }
+
+        .dosis-mg-display {
+            background-color: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #4CAF50;
+            margin-top: 10px;
+        }
+
+        .dosis-mg-display span {
+            font-weight: 700;
+            color: #2e7d32;
+            font-size: 16px;
         }
 
         #btn-generar-grafico {
@@ -277,6 +387,14 @@
             .control-group label, .horario-group label {
                 min-width: auto;
             }
+
+            .dosis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dosis-fields {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -303,19 +421,83 @@
                 <label for="tmax-input">Tmax (horas):</label>
                 <input type="number" id="tmax-input" step="0.1" min="0.1" placeholder="1.0">
             </div>
-            
-            <div class="horario-group">
-                <label>Horario de Dosis:</label>
-                <input type="time" id="hora-dosis-1" value="08:00">
-                <span style="margin: 0 10px;">/</span>
-                <input type="time" id="hora-dosis-2" value="20:00">
-            </div>
-            
-            <div class="horario-group">
-                <label>Porcentaje Dosis:</label>
-                <input type="number" id="porcentaje-dosis-1" value="70" min="0" max="100" placeholder="70">
-                <span style="margin: 0 10px;">/</span>
-                <input type="number" id="porcentaje-dosis-2" value="30" min="0" max="100" placeholder="30">
+        </div>
+
+        <div class="dosis-total-group">
+            <label for="dosis-total-mg">Dosis Total Diaria (mg):</label>
+            <input type="number" id="dosis-total-mg" step="0.1" min="0.1" placeholder="20.0" value="20.0">
+        </div>
+        
+        <div class="horario-dosis-section">
+            <h4>Horario de Dosis</h4>
+            <div class="dosis-grid">
+                <div class="dosis-item">
+                    <h5>Dosis 1</h5>
+                    <div class="dosis-fields">
+                        <div class="dosis-field">
+                            <label for="hora-dosis-1">Hora:</label>
+                            <input type="time" id="hora-dosis-1" value="08:00">
+                        </div>
+                        <div class="dosis-field">
+                            <label for="porcentaje-dosis-1">%:</label>
+                            <input type="number" id="porcentaje-dosis-1" value="70" min="0" max="100" placeholder="70">
+                        </div>
+                    </div>
+                    <div class="dosis-mg-display">
+                        Dosis: <span id="dosis-mg-1">14.0 mg</span>
+                    </div>
+                </div>
+
+                <div class="dosis-item">
+                    <h5>Dosis 2</h5>
+                    <div class="dosis-fields">
+                        <div class="dosis-field">
+                            <label for="hora-dosis-2">Hora:</label>
+                            <input type="time" id="hora-dosis-2" value="12:00">
+                        </div>
+                        <div class="dosis-field">
+                            <label for="porcentaje-dosis-2">%:</label>
+                            <input type="number" id="porcentaje-dosis-2" value="20" min="0" max="100" placeholder="20">
+                        </div>
+                    </div>
+                    <div class="dosis-mg-display">
+                        Dosis: <span id="dosis-mg-2">4.0 mg</span>
+                    </div>
+                </div>
+
+                <div class="dosis-item">
+                    <h5>Dosis 3</h5>
+                    <div class="dosis-fields">
+                        <div class="dosis-field">
+                            <label for="hora-dosis-3">Hora:</label>
+                            <input type="time" id="hora-dosis-3" value="16:00">
+                        </div>
+                        <div class="dosis-field">
+                            <label for="porcentaje-dosis-3">%:</label>
+                            <input type="number" id="porcentaje-dosis-3" value="10" min="0" max="100" placeholder="10">
+                        </div>
+                    </div>
+                    <div class="dosis-mg-display">
+                        Dosis: <span id="dosis-mg-3">2.0 mg</span>
+                    </div>
+                </div>
+
+                <div class="dosis-item">
+                    <h5>Dosis 4</h5>
+                    <div class="dosis-fields">
+                        <div class="dosis-field">
+                            <label for="hora-dosis-4">Hora:</label>
+                            <input type="time" id="hora-dosis-4" value="20:00">
+                        </div>
+                        <div class="dosis-field">
+                            <label for="porcentaje-dosis-4">%:</label>
+                            <input type="number" id="porcentaje-dosis-4" value="0" min="0" max="100" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="dosis-mg-display">
+                        Dosis: <span id="dosis-mg-4">0.0 mg</span>
+                    </div>
+                </div>
             </div>
             
             <button id="btn-generar-grafico">Generar Gráfico</button>
@@ -342,7 +524,14 @@
                 ],
                 nota: "Esta dosificación respeta el ritmo circadiano natural del cortisol.",
                 vidaMedia: 1.5,
-                tmax: 1.0
+                tmax: 1.0,
+                dosisTotal: 20.0,
+                dosis: [
+                    { hora: "08:00", porcentaje: 70 },
+                    { hora: "12:00", porcentaje: 20 },
+                    { hora: "16:00", porcentaje: 10 },
+                    { hora: "20:00", porcentaje: 0 }
+                ]
             },
             prednisona: {
                 titulo: "Prednisona - Glucocorticoide de acción intermedia",
@@ -356,7 +545,14 @@
                 ],
                 nota: "La administración matutina optimiza la eficacia y minimiza efectos adversos.",
                 vidaMedia: 18.0,
-                tmax: 1.5
+                tmax: 1.5,
+                dosisTotal: 5.0,
+                dosis: [
+                    { hora: "08:00", porcentaje: 100 },
+                    { hora: "12:00", porcentaje: 0 },
+                    { hora: "16:00", porcentaje: 0 },
+                    { hora: "20:00", porcentaje: 0 }
+                ]
             },
             dexametasona: {
                 titulo: "Dexametasona - Glucocorticoide de acción prolongada",
@@ -373,12 +569,30 @@
                 ],
                 nota: "La administración matutina es crucial para mantener la homeostasis hormonal.",
                 vidaMedia: 54.0,
-                tmax: 2.0
+                tmax: 2.0,
+                dosisTotal: 0.5,
+                dosis: [
+                    { hora: "08:00", porcentaje: 100 },
+                    { hora: "12:00", porcentaje: 0 },
+                    { hora: "16:00", porcentaje: 0 },
+                    { hora: "20:00", porcentaje: 0 }
+                ]
             }
         };
 
         // Variables globales para el gráfico
         let chart = null;
+
+        // Función para calcular y mostrar las dosis en miligramos
+        function calcularDosisMg() {
+            const dosisTotal = parseFloat(document.getElementById('dosis-total-mg').value) || 0;
+            
+            for (let i = 1; i <= 4; i++) {
+                const porcentaje = parseFloat(document.getElementById(`porcentaje-dosis-${i}`).value) || 0;
+                const dosisMg = (porcentaje / 100) * dosisTotal;
+                document.getElementById(`dosis-mg-${i}`).textContent = `${dosisMg.toFixed(1)} mg`;
+            }
+        }
 
         // Función para crear el HTML de la recomendación de forma estructurada
         function crearRecomendacionHTML(medicamento) {
@@ -435,7 +649,7 @@
             return html;
         }
 
-        // Función para mostrar recomendación
+        // Función para mostrar recomendación y llenar campos
         function mostrarRecomendacion(medicamento) {
             const recomendacionTexto = document.getElementById('recomendacion-texto');
             recomendacionTexto.innerHTML = crearRecomendacionHTML(medicamento);
@@ -445,19 +659,45 @@
             const rec = recomendaciones[medicamento];
             document.getElementById('half-life-input').value = rec.vidaMedia;
             document.getElementById('tmax-input').value = rec.tmax;
+            document.getElementById('dosis-total-mg').value = rec.dosisTotal;
+            
+            // Llenar campos de dosis
+            rec.dosis.forEach((dosis, index) => {
+                document.getElementById(`hora-dosis-${index + 1}`).value = dosis.hora;
+                document.getElementById(`porcentaje-dosis-${index + 1}`).value = dosis.porcentaje;
+            });
+            
+            // Calcular y mostrar dosis en miligramos
+            calcularDosisMg();
         }
 
         // Función para generar el gráfico de concentración plasmática
         function generarGrafico() {
             const vidaMedia = parseFloat(document.getElementById('half-life-input').value);
             const tmax = parseFloat(document.getElementById('tmax-input').value);
-            const horaDosis1 = document.getElementById('hora-dosis-1').value;
-            const horaDosis2 = document.getElementById('hora-dosis-2').value;
-            const porcentajeDosis1 = parseFloat(document.getElementById('porcentaje-dosis-1').value);
-            const porcentajeDosis2 = parseFloat(document.getElementById('porcentaje-dosis-2').value);
+            const dosisTotal = parseFloat(document.getElementById('dosis-total-mg').value);
             
-            if (!vidaMedia || !tmax) {
-                alert('Por favor, ingresa valores válidos para la vida media y Tmax');
+            if (!vidaMedia || !tmax || !dosisTotal) {
+                alert('Por favor, ingresa valores válidos para la vida media, Tmax y dosis total');
+                return;
+            }
+            
+            // Obtener datos de las cuatro dosis
+            const dosis = [];
+            for (let i = 1; i <= 4; i++) {
+                const hora = document.getElementById(`hora-dosis-${i}`).value;
+                const porcentaje = parseFloat(document.getElementById(`porcentaje-dosis-${i}`).value) || 0;
+                if (hora && porcentaje > 0) {
+                    dosis.push({
+                        hora: hora,
+                        porcentaje: porcentaje,
+                        mg: (porcentaje / 100) * dosisTotal
+                    });
+                }
+            }
+            
+            if (dosis.length === 0) {
+                alert('Por favor, ingresa al menos una dosis válida');
                 return;
             }
             
@@ -469,8 +709,13 @@
             const concentraciones = [];
             
             // Convertir horas de dosis a minutos desde medianoche
-            const hora1Minutos = parseInt(horaDosis1.split(':')[0]) * 60 + parseInt(horaDosis1.split(':')[1]);
-            const hora2Minutos = parseInt(horaDosis2.split(':')[0]) * 60 + parseInt(horaDosis2.split(':')[1]);
+            const dosisMinutos = dosis.map(d => {
+                const [h, m] = d.hora.split(':').map(Number);
+                return {
+                    minutos: h * 60 + m,
+                    mg: d.mg
+                };
+            });
             
             for (let hora = 0; hora <= 24; hora++) {
                 const tiempoMinutos = hora * 60;
@@ -478,31 +723,20 @@
                 
                 let concentracion = 0;
                 
-                // Calcular concentración para la primera dosis
-                if (tiempoMinutos >= hora1Minutos) {
-                    const tiempoDesdeDosis1 = (tiempoMinutos - hora1Minutos) / 60; // en horas
-                    if (tiempoDesdeDosis1 <= tmax) {
-                        // Fase de absorción (hasta Tmax)
-                        concentracion += (porcentajeDosis1 / 100) * (tiempoDesdeDosis1 / tmax);
-                    } else {
-                        // Fase de eliminación (después de Tmax)
-                        const concentracionMaxima = porcentajeDosis1 / 100;
-                        concentracion += concentracionMaxima * Math.exp(-k * (tiempoDesdeDosis1 - tmax));
+                // Calcular concentración para cada dosis
+                dosisMinutos.forEach(dosis => {
+                    if (tiempoMinutos >= dosis.minutos) {
+                        const tiempoDesdeDosis = (tiempoMinutos - dosis.minutos) / 60; // en horas
+                        if (tiempoDesdeDosis <= tmax) {
+                            // Fase de absorción (hasta Tmax)
+                            concentracion += (dosis.mg / dosisTotal) * (tiempoDesdeDosis / tmax);
+                        } else {
+                            // Fase de eliminación (después de Tmax)
+                            const concentracionMaxima = dosis.mg / dosisTotal;
+                            concentracion += concentracionMaxima * Math.exp(-k * (tiempoDesdeDosis - tmax));
+                        }
                     }
-                }
-                
-                // Calcular concentración para la segunda dosis
-                if (tiempoMinutos >= hora2Minutos) {
-                    const tiempoDesdeDosis2 = (tiempoMinutos - hora2Minutos) / 60; // en horas
-                    if (tiempoDesdeDosis2 <= tmax) {
-                        // Fase de absorción (hasta Tmax)
-                        concentracion += (porcentajeDosis2 / 100) * (tiempoDesdeDosis2 / tmax);
-                    } else {
-                        // Fase de eliminación (después de Tmax)
-                        const concentracionMaxima = porcentajeDosis2 / 100;
-                        concentracion += concentracionMaxima * Math.exp(-k * (tiempoDesdeDosis2 - tmax));
-                    }
-                }
+                });
                 
                 concentraciones.push(concentracion);
             }
@@ -589,6 +823,16 @@
         
         // Event listener para el botón de generar gráfico
         document.getElementById('btn-generar-grafico').addEventListener('click', generarGrafico);
+        
+        // Event listeners para recalcular dosis en mg cuando cambien los valores
+        document.getElementById('dosis-total-mg').addEventListener('input', calcularDosisMg);
+        
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`porcentaje-dosis-${i}`).addEventListener('input', calcularDosisMg);
+        }
+        
+        // Inicializar cálculo de dosis
+        calcularDosisMg();
     </script>
 </body>
 </html>
