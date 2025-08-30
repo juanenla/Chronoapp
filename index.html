@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronoapp</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        #app-logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 150px;
+            height: auto;
+        }
+        
+        .button-group {
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #btn-hidrocortisona {
+            background-color: #2196F3;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        #btn-hidrocortisona:hover {
+            background-color: #1976D2;
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+        
+        #btn-prednisona {
+            background-color: #FF9800;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+        
+        #btn-prednisona:hover {
+            background-color: #F57C00;
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        
+        #btn-dexametasona {
+            background-color: #9C27B0;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+        }
+        
+        #btn-dexametasona:hover {
+            background-color: #7B1FA2;
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+        }
+
+        .farmacocinetica-controls {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #2196F3;
+            text-align: left;
+        }
+
+        .farmacocinetica-controls h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #444;
+            min-width: 120px;
+        }
+
+        .control-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 100px;
+        }
+
+        .horario-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .horario-group label {
+            font-weight: 600;
+            color: #444;
+            min-width: 120px;
+        }
+
+        .horario-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 80px;
+        }
+
+        #btn-generar-grafico {
+            background-color: #FF5722;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+            margin: 20px 0;
+        }
+
+        #btn-generar-grafico:hover {
+            background-color: #E64A19;
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+        }
+
+        .chart-container {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #FF5722;
+        }
+
+        #chart-area {
+            max-width: 100%;
+            height: 400px;
+        }
+        
+        #recomendacion-texto {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #4CAF50;
+            margin-top: 20px;
+            min-height: 60px;
+            text-align: left;
+            box-sizing: border-box;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        .empty-state {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        .recomendacion-titulo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 8px;
+        }
+        
+        .recomendacion-subtitulo {
+            font-size: 18px;
+            font-weight: 600;
+            color: #444;
+            margin: 15px 0 10px 0;
+        }
+        
+        .recomendacion-lista {
+            margin: 10px 0 15px 0;
+            padding-left: 20px;
+        }
+        
+        .recomendacion-lista li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .recomendacion-nota {
+            font-style: italic;
+            color: #666;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f5e8;
+            border-radius: 5px;
+            border-left: 3px solid #4CAF50;
+        }
+        
+        .recomendacion-info {
+            background-color: #f0f8ff;
+            padding: 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 3px solid #2196F3;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            #recomendacion-texto {
+                padding: 20px;
+                font-size: 14px;
+            }
+            
+            .recomendacion-titulo {
+                font-size: 18px;
+            }
+            
+            .recomendacion-subtitulo {
+                font-size: 16px;
+            }
+
+            .control-group, .horario-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .control-group label, .horario-group label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CronoApp</h1>
+        <img src="logo_chronoapp.jpg" alt="Logo de CronoApp" id="app-logo">
+        
+        <div class="button-group">
+            <button id="btn-hidrocortisona">Hidrocortisona</button>
+            <button id="btn-prednisona">Prednisona</button>
+            <button id="btn-dexametasona">Dexametasona</button>
+        </div>
+        
+        <div class="farmacocinetica-controls">
+            <h3>Parámetros Farmacocinéticos</h3>
+            
+            <div class="control-group">
+                <label for="half-life-input">Vida Media (horas):</label>
+                <input type="number" id="half-life-input" step="0.1" min="0.1" placeholder="1.5">
+            </div>
+            
+            <div class="control-group">
+                <label for="tmax-input">Tmax (horas):</label>
+                <input type="number" id="tmax-input" step="0.1" min="0.1" placeholder="1.0">
+            </div>
+            
+            <div class="horario-group">
+                <label>Horario de Dosis:</label>
+                <input type="time" id="hora-dosis-1" value="08:00">
+                <span style="margin: 0 10px;">/</span>
+                <input type="time" id="hora-dosis-2" value="20:00">
+            </div>
+            
+            <div class="horario-group">
+                <label>Porcentaje Dosis:</label>
+                <input type="number" id="porcentaje-dosis-1" value="70" min="0" max="100" placeholder="70">
+                <span style="margin: 0 10px;">/</span>
+                <input type="number" id="porcentaje-dosis-2" value="30" min="0" max="100" placeholder="30">
+            </div>
+            
+            <button id="btn-generar-grafico">Generar Gráfico</button>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="chart-area"></canvas>
+        </div>
+        
+        <div id="recomendacion-texto" class="empty-state">Selecciona un medicamento para ver la recomendación</div>
+    </div>
+
+    <script>
+        // Base de datos de recomendaciones organizada en objetos JSON
+        const recomendaciones = {
+            hidrocortisona: {
+                titulo: "Hidrocortisona - Glucocorticoide de acción corta",
+                subtitulo: "Vida media: 1,5 horas (1 hora y media)",
+                dosificacion: "Dosis dividida en 3-4 tomas diarias",
+                esquema: [
+                    "Dosis mayor al despertar (6-8 AM): Para imitar el pico natural de cortisol matutino",
+                    "Dosis menores durante el día: Para mantener niveles terapéuticos",
+                    "Dosis antes de acostarse: Para cubrir el período nocturno"
+                ],
+                nota: "Esta dosificación respeta el ritmo circadiano natural del cortisol.",
+                vidaMedia: 1.5,
+                tmax: 1.0
+            },
+            prednisona: {
+                titulo: "Prednisona - Glucocorticoide de acción intermedia",
+                subtitulo: "Vida media: 18-36 horas",
+                dosificacion: "Dosis única por la mañana (6-8 AM)",
+                info: "Tmax (pico de concentración): 1-2 horas post-ingesta",
+                justificacion: [
+                    "Su efecto prolongado coincide perfectamente con el ritmo circadiano",
+                    "El pico de concentración se alcanza rápidamente, proporcionando efecto inmediato",
+                    "Su duración de acción cubre todo el día sin necesidad de dosis adicionales"
+                ],
+                nota: "La administración matutina optimiza la eficacia y minimiza efectos adversos.",
+                vidaMedia: 18.0,
+                tmax: 1.5
+            },
+            dexametasona: {
+                titulo: "Dexametasona - Glucocorticoide de acción prolongada",
+                subtitulo: "Vida media: 36-72 horas",
+                dosificacion: "Dosis única por la mañana (6-8 AM)",
+                justificacion: [
+                    "Su efecto se mantiene durante todo el día gracias a su larga vida media",
+                    "Previene la supresión excesiva del eje hipotálamo-hipófisis-adrenal",
+                    "Evita el insomnio al no interferir con el patrón natural de sueño"
+                ],
+                ventajas: [
+                    "Sincronización con el ritmo circadiano natural",
+                    "Mejor tolerabilidad y menor riesgo de efectos adversos"
+                ],
+                nota: "La administración matutina es crucial para mantener la homeostasis hormonal.",
+                vidaMedia: 54.0,
+                tmax: 2.0
+            }
+        };
+
+        // Variables globales para el gráfico
+        let chart = null;
+
+        // Función para crear el HTML de la recomendación de forma estructurada
+        function crearRecomendacionHTML(medicamento) {
+            const rec = recomendaciones[medicamento];
+            let html = '';
+            
+            // Título principal
+            html += `<div class="recomendacion-titulo">${rec.titulo}</div>`;
+            
+            // Subtítulo con vida media
+            html += `<div class="recomendacion-subtitulo">${rec.subtitulo}</div>`;
+            
+            // Información adicional si existe
+            if (rec.info) {
+                html += `<div class="recomendacion-info">${rec.info}</div>`;
+            }
+            
+            // Dosificación
+            html += `<div class="recomendacion-subtitulo">Dosificación recomendada:</div>`;
+            html += `<div>${rec.dosificacion}</div>`;
+            
+            // Esquema o justificación
+            if (rec.esquema) {
+                html += `<div class="recomendacion-subtitulo">Esquema de dosificación:</div>`;
+                html += '<ul class="recomendacion-lista">';
+                rec.esquema.forEach(item => {
+                    html += `<li>${item}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            if (rec.justificacion) {
+                html += `<div class="recomendacion-subtitulo">Justificación farmacocinética:</div>`;
+                html += '<ul class="recomendacion-lista">';
+                rec.justificacion.forEach(item => {
+                    html += `<li>${item}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            // Ventajas si existen
+            if (rec.ventajas) {
+                html += `<div class="recomendacion-subtitulo">Ventajas de la dosificación matutina:</div>`;
+                html += '<ul class="recomendacion-lista">';
+                rec.ventajas.forEach(item => {
+                    html += `<li>${item}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            // Nota final
+            html += `<div class="recomendacion-nota">${rec.nota}</div>`;
+            
+            return html;
+        }
+
+        // Función para mostrar recomendación
+        function mostrarRecomendacion(medicamento) {
+            const recomendacionTexto = document.getElementById('recomendacion-texto');
+            recomendacionTexto.innerHTML = crearRecomendacionHTML(medicamento);
+            recomendacionTexto.classList.remove('empty-state');
+            
+            // Rellenar automáticamente los campos farmacocinéticos
+            const rec = recomendaciones[medicamento];
+            document.getElementById('half-life-input').value = rec.vidaMedia;
+            document.getElementById('tmax-input').value = rec.tmax;
+        }
+
+        // Función para generar el gráfico de concentración plasmática
+        function generarGrafico() {
+            const vidaMedia = parseFloat(document.getElementById('half-life-input').value);
+            const tmax = parseFloat(document.getElementById('tmax-input').value);
+            const horaDosis1 = document.getElementById('hora-dosis-1').value;
+            const horaDosis2 = document.getElementById('hora-dosis-2').value;
+            const porcentajeDosis1 = parseFloat(document.getElementById('porcentaje-dosis-1').value);
+            const porcentajeDosis2 = parseFloat(document.getElementById('porcentaje-dosis-2').value);
+            
+            if (!vidaMedia || !tmax) {
+                alert('Por favor, ingresa valores válidos para la vida media y Tmax');
+                return;
+            }
+            
+            // Calcular constante de eliminación (k)
+            const k = 0.693 / vidaMedia;
+            
+            // Generar datos para 24 horas
+            const horas = [];
+            const concentraciones = [];
+            
+            // Convertir horas de dosis a minutos desde medianoche
+            const hora1Minutos = parseInt(horaDosis1.split(':')[0]) * 60 + parseInt(horaDosis1.split(':')[1]);
+            const hora2Minutos = parseInt(horaDosis2.split(':')[0]) * 60 + parseInt(horaDosis2.split(':')[1]);
+            
+            for (let hora = 0; hora <= 24; hora++) {
+                const tiempoMinutos = hora * 60;
+                horas.push(hora);
+                
+                let concentracion = 0;
+                
+                // Calcular concentración para la primera dosis
+                if (tiempoMinutos >= hora1Minutos) {
+                    const tiempoDesdeDosis1 = (tiempoMinutos - hora1Minutos) / 60; // en horas
+                    if (tiempoDesdeDosis1 <= tmax) {
+                        // Fase de absorción (hasta Tmax)
+                        concentracion += (porcentajeDosis1 / 100) * (tiempoDesdeDosis1 / tmax);
+                    } else {
+                        // Fase de eliminación (después de Tmax)
+                        const concentracionMaxima = porcentajeDosis1 / 100;
+                        concentracion += concentracionMaxima * Math.exp(-k * (tiempoDesdeDosis1 - tmax));
+                    }
+                }
+                
+                // Calcular concentración para la segunda dosis
+                if (tiempoMinutos >= hora2Minutos) {
+                    const tiempoDesdeDosis2 = (tiempoMinutos - hora2Minutos) / 60; // en horas
+                    if (tiempoDesdeDosis2 <= tmax) {
+                        // Fase de absorción (hasta Tmax)
+                        concentracion += (porcentajeDosis2 / 100) * (tiempoDesdeDosis2 / tmax);
+                    } else {
+                        // Fase de eliminación (después de Tmax)
+                        const concentracionMaxima = porcentajeDosis2 / 100;
+                        concentracion += concentracionMaxima * Math.exp(-k * (tiempoDesdeDosis2 - tmax));
+                    }
+                }
+                
+                concentraciones.push(concentracion);
+            }
+            
+            // Destruir gráfico anterior si existe
+            if (chart) {
+                chart.destroy();
+            }
+            
+            // Crear nuevo gráfico
+            const ctx = document.getElementById('chart-area').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: horas,
+                    datasets: [{
+                        label: 'Concentración Plasmática',
+                        data: concentraciones,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Concentración Plasmática en 24 Horas',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Hora del día'
+                            },
+                            ticks: {
+                                stepSize: 2
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Concentración Relativa'
+                            },
+                            beginAtZero: true,
+                            max: Math.max(...concentraciones) * 1.1
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        // Event listeners para cada botón
+        document.getElementById('btn-hidrocortisona').addEventListener('click', () => {
+            mostrarRecomendacion('hidrocortisona');
+        });
+        
+        document.getElementById('btn-prednisona').addEventListener('click', () => {
+            mostrarRecomendacion('prednisona');
+        });
+        
+        document.getElementById('btn-dexametasona').addEventListener('click', () => {
+            mostrarRecomendacion('dexametasona');
+        });
+        
+        // Event listener para el botón de generar gráfico
+        document.getElementById('btn-generar-grafico').addEventListener('click', generarGrafico);
+    </script>
+</body>
+</html>
+
